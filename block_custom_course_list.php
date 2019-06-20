@@ -443,6 +443,48 @@ class block_custom_course_list extends block_list {
                 $array_courses_group['regular_courses'] = $this->theme_moove_group_courses_by_semester($array_courses_order['regular_courses'], 'regular');
                 $array_courses_group['no_regular_courses'] = $this->theme_moove_group_courses_by_semester($array_courses_order['no_regular_courses'], 'noregular');
                 //print_r($array_courses_group);
+                //html = "";
+                /*foreach ($array_courses_group as $course_group){
+                    var_dump($course_group);
+                }*/
+
+                //Past Regular
+                $html = "";
+                foreach ($array_courses_group as $course_group){
+                    //var_dump($course_group['past_regular']);
+                    foreach ($course_group['past_regular'] as $courses_data){
+                        $html .= "<div class=\"\">
+	<div class=\"\" id=\"heading\" 201802=\"\">
+		<h5 class=\"mb-0\">
+		<button class=\"btn btn-link\" data-toggle=\"collapse\" data-target=\"#201802\" aria-expanded=\"true\" aria-controls=\"201802\">
+		<b><span class=\"fa fa-caret-right\"></span>";
+                        $html .= $courses_data['semester_name'];
+                        $html .= "</b>
+		</button>
+		</h5>
+	</div>";
+                        $html .= "<div- id=\"201802\" class=\"collapse\" aria-labelledby=\"heading\" 201802=\"\" data-parent=\"#accordion\">
+		<div class=\"card-body\">
+			<ul>";
+                        foreach ($courses_data['courses'] as $data){
+                            $html .= "<li class=\"no_bullet_point\">
+					<a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=38476\">";
+
+                            $html .= $data->fullname;
+                            $html .= "</a>
+				</li>";
+                            //var_dump($data->shortname);
+                            //var_dump($data->id);
+                        }
+                        $html .= "</ul>
+		</div>
+	</div>
+</div>";
+                    }
+                }
+                //End Past Regular
+
+                var_dump($html);
 
                 foreach ($courses as $course) {
                     $coursecontext = context_course::instance($course->id);
@@ -583,7 +625,9 @@ class block_custom_course_list extends block_list {
             $lis[] = $item;
             $row = 1 - $row; // Flip even/odd.
         }
-        return html_writer::tag('ul', implode("\n", $lis), array('class' => 'unlist'));
+        $data = html_writer::tag('ul', implode("\n", $lis), array('class' => 'unlist'));
+        //var_dump($data);
+        return $data;
     }
 
 

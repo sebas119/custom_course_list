@@ -446,6 +446,7 @@ class block_custom_course_list extends block_list {
 
                 foreach ($courses as $course) {
                     $coursecontext = context_course::instance($course->id);
+                    //var_dump($coursecontext);
                     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                     $this->content->items[]="<a $linkcss title=\"" . format_string($course->shortname, true, array('context' => $coursecontext)) . "\" ".
                                "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".$icon.format_string(get_course_display_name_for_list($course)). "</a>";
@@ -460,6 +461,7 @@ class block_custom_course_list extends block_list {
 
             $this->get_remote_courses();
             if ($this->content->items) { // make sure we don't return an empty list
+                //print_r($this->content);
                 return $this->content;
             }
         }
@@ -560,6 +562,41 @@ class block_custom_course_list extends block_list {
     public function get_aria_role() {
         return 'navigation';
     }
+
+    /**
+     * Render the contents of a block_list.
+     *
+     * @param array $icons the icon for each item.
+     * @param array $items the content of each item.
+     * @return string HTML
+     */
+    public function list_block_contents($icons, $items) {
+        $row = 0;
+        $lis = array();
+        foreach ($items as $key => $string) {
+            $item = html_writer::start_tag('li', array('class' => 'r' . $row));
+            if (!empty($icons[$key])) { //test if the content has an assigned icon
+                $item .= html_writer::tag('div', $icons[$key], array('class' => 'icon column c0'));
+            }
+            $item .= html_writer::tag('div', $string, array('class' => 'column c1'));
+            $item .= html_writer::end_tag('li');
+            $lis[] = $item;
+            $row = 1 - $row; // Flip even/odd.
+        }
+        return html_writer::tag('ul', implode("\n", $lis), array('class' => 'unlist'));
+    }
+
+
+    protected function formatted_contents($output) {
+        $this->get_content();
+        $this->get_required_javascript();
+        if (!empty($this->content->items)) {
+            return $this->list_block_contents($this->content->icons, $this->content->items);
+        } else {
+            return '';
+        }
+    }
+
 }
 
 

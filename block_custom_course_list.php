@@ -411,6 +411,15 @@ class block_custom_course_list extends block_list {
         return $courses;
     }
 
+    function uv_first_capital($string){
+        $pattern = '/\b(?![LXIVCDM]+\b)([A-Z_-ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ]+)\b/';
+        $output = preg_replace_callback($pattern, function($matches) {
+            return ucfirst(mb_strtolower($matches[0], 'UTF-8'));
+        }, $string);
+
+        return $output;
+    }
+
     function get_content() {
         global $CFG, $USER, $DB, $OUTPUT;
 
@@ -443,13 +452,37 @@ class block_custom_course_list extends block_list {
                 $array_courses_group['regular_courses'] = $this->theme_moove_group_courses_by_semester($array_courses_order['regular_courses'], 'regular');
                 $array_courses_group['no_regular_courses'] = $this->theme_moove_group_courses_by_semester($array_courses_order['no_regular_courses'], 'noregular');
                 //print_r($array_courses_group);
-                //html = "";
-                /*foreach ($array_courses_group as $course_group){
-                    var_dump($course_group);
-                }*/
+                $html = "";
+
+                //In Progress Regular
+                $html .= "<div class=\"\">
+			    <div class=\"\" id=\"heading\" >
+				<h5 class=\"mb-0\">
+				<button class=\"btn btn-link\" data-toggle=\"collapse\" style=\"padding: 0.190rem .10rem !important;\" data-target=\"#progreso\" aria-expanded=\"true\" aria-controls=\"progreso\">
+				<b><span class=\"fa fa-caret-right\"></span> En Progreso</b>
+				</button>
+				</h5>
+			    </div>
+			
+			    <div id=\"progreso\" class=\"collapse\" aria-labelledby=\"heading\"  data-parent=\"#accordion\">
+				<div class=\"card-body\" style=\"padding: 0.50rem 1.00rem 0rem 1.00rem !important;\">
+				<ul>";
+                foreach ($array_courses_group['regular_courses']['inprogress_regular'] as $courses_in_progress){
+                    $html .= "<li class=\"no_bullet_point\">
+					        <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
+                    $html .= $courses_in_progress->id;
+                    $html .= "\">";
+                    $html .= $courses_in_progress->shortname . " " . $this->uv_first_capital($courses_in_progress->fullname);
+                    $html .= "</a>
+				     </li>";
+                }
+                $html .= "</ul>
+		                </div>
+	                    </div>
+                        </div>";
+                //End In Progress Regular
 
                 //Past Regular
-                $html = "";
                 foreach ($array_courses_group as $course_group){
                     //var_dump($course_group['past_regular']);
                     foreach ($course_group['past_regular'] as $courses_data){
@@ -473,18 +506,12 @@ class block_custom_course_list extends block_list {
 		                <div class=\"card-body\" style=\"padding: 0.50rem 1.00rem 0rem 1.00rem !important;\">
 			            <ul style=\"padding-left: 0rem !important;\">";
                         foreach ($courses_data['courses'] as $data){
-                            $input = $data->fullname;
-                            $pattern = '/\b(?![LXIVCDM]+\b)([A-Z_-ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ]+)\b/';
-                            $output = preg_replace_callback($pattern, function($matches) {
-                                //var_dump($matches[0]);
-                                return ucfirst(mb_strtolower($matches[0], 'UTF-8'));
-                            }, $input);
 
                             $html .= "<li class=\"no_bullet_point\">
 					        <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
                             $html .= $data->id;
 					        $html .= "\">";
-                            $html .= $data->shortname . " " . $output;
+                            $html .= $data->shortname . " " . $this->uv_first_capital($data->fullname);
                             $html .= "</a>
 				            </li>";
 

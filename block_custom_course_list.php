@@ -455,6 +455,7 @@ class block_custom_course_list extends block_list {
                 $html = "";
 
                 //In Progress Regular
+                //IMPORTANTE TAMBIEN MOSTRAR AL FINAL LOS INPROGRESS NO REGULAR
                 $html .= "<div class=\"\">
 			    <div class=\"\" id=\"heading\" >
 				<h5 class=\"mb-0\">
@@ -466,7 +467,7 @@ class block_custom_course_list extends block_list {
 			
 			    <div id=\"progreso\" class=\"collapse\" aria-labelledby=\"heading\"  data-parent=\"#accordion\">
 				<div class=\"card-body\" style=\"padding: 0.50rem 1.00rem 0rem 1.00rem !important;\">
-				<ul>";
+				<ul style=\"padding-left: 0rem !important;\">";
                 foreach ($array_courses_group['regular_courses']['inprogress_regular'] as $courses_in_progress){
                     $html .= "<li class=\"no_bullet_point\">
 					        <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
@@ -523,8 +524,12 @@ class block_custom_course_list extends block_list {
                     }
                 }
                 //End Past Regular
+                //Solo los pasados no regulares que se muestren al final
+                //No Regular
+                var_dump($array_courses_group['no_regular_courses']);
 
-                //var_dump($html);
+
+                //End No Regular
                 $this->content->items[] = $html;
                 /*foreach ($courses as $course) {
                     $coursecontext = context_course::instance($course->id);

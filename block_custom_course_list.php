@@ -411,6 +411,15 @@ class block_custom_course_list extends block_list {
         return $courses;
     }
 
+    function uv_first_capital($string){
+        $pattern = '/\b(?![LXIVCDM]+\b)([A-Z_-ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ]+)\b/';
+        $output = preg_replace_callback($pattern, function($matches) {
+            return ucfirst(mb_strtolower($matches[0], 'UTF-8'));
+        }, $string);
+
+        return $output;
+    }
+
     function get_content() {
         global $CFG, $USER, $DB, $OUTPUT;
 
@@ -437,20 +446,137 @@ class block_custom_course_list extends block_list {
             if ($courses = enrol_get_all_users_courses($USER->id, true, null)) {
 
                 $array_courses_group = array();
+
                 // Función añadida para el Campus Virtual Univalle
-                $courses = $this->order_courses_univalle($courses);
+                //$courses = $this->order_courses_univalle($courses);
                 $array_courses_order = $this->theme_moove_order_courses_by_shortname($courses);
                 $array_courses_group['regular_courses'] = $this->theme_moove_group_courses_by_semester($array_courses_order['regular_courses'], 'regular');
                 $array_courses_group['no_regular_courses'] = $this->theme_moove_group_courses_by_semester($array_courses_order['no_regular_courses'], 'noregular');
-                //print_r($array_courses_group);
+                $html = "";
 
-                foreach ($courses as $course) {
+                //In Progress Regular and In Progress No Regular
+                $html .= "<div class=\"\">
+			    <div class=\"\" id=\"heading\" >
+				<h5 class=\"mb-0\">
+				<button class=\"btn btn-link\" data-toggle=\"collapse\" style=\"padding: 0.190rem .10rem !important;\" data-target=\"#progreso\" aria-expanded=\"true\" aria-controls=\"progreso\">
+				<b><span class=\"fa fa-caret-right\"></span> En Progreso</b>
+				</button>
+				</h5>
+			    </div>
+			
+			    <div id=\"progreso\" class=\"collapse\" aria-labelledby=\"heading\"  data-parent=\"#accordion\">
+				<div class=\"card-body\" style=\"padding: 0.50rem 1.00rem 0rem 1.00rem !important;\">
+				<ul style=\"padding-left: 0rem !important;\">";
+                foreach ($array_courses_group['regular_courses']['inprogress_regular'] as $courses_in_progress){
+                    $html .= "<li class=\"no_bullet_point\">
+					        <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
+                    $html .= $courses_in_progress->id;
+                    $html .= "\">";
+                    $html .= $courses_in_progress->shortname . " " . $this->uv_first_capital($courses_in_progress->fullname);
+                    $html .= "</a>
+				     </li>";
+                }
+                foreach ($array_courses_group['no_regular_courses']["inprogress_no_regular"] as $courses_in_progress){
+                    $html .= "<li class=\"no_bullet_point\">
+					        <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
+                    $html .= $courses_in_progress->id;
+                    $html .= "\">";
+                    $html .= $this->uv_first_capital($courses_in_progress->fullname);
+                    $html .= "</a>
+				     </li>";
+                }
+                $html .= "</ul>
+		                </div>
+	                    </div>
+                        </div>";
+                //End In Progress Regular and In Progress No Regular
+
+                //Past Regular
+                foreach ($array_courses_group as $course_group){
+                    foreach ($course_group['past_regular'] as $courses_data){
+                        $html .= "<div class=\"\">
+	                    <div class=\"\" id=\"heading\">
+		                <h5 class=\"mb-0\">
+		                <button class=\"btn btn-link\" data-toggle=\"collapse\" style=\"padding: 0.190rem .10rem !important;\" data-target=\"";
+		                $html .= "#" . $courses_data['semester_code'] . "M";
+		                $html .= "\" aria-expanded=\"true\" aria-controls=\"";
+                        $html .= $courses_data['semester_code'] . "M";
+                        $html .= "\">
+		                <b><span class=\"fa fa-caret-right\"></span>";
+                        $html .= $courses_data['semester_name'];
+                        $html .= "</b>
+		                </button>
+		                </h5>
+	                    </div>";
+                        $html .= "<div id=\"";
+                        $html .= $courses_data['semester_code'] . "M";
+                        $html .= "\" class=\"collapse\" aria-labelledby=\"heading\" data-parent=\"#accordion\">
+		                <div class=\"card-body\" style=\"padding: 0.50rem 1.00rem 0rem 1.00rem !important;\">
+			            <ul style=\"padding-left: 0rem !important;\">";
+                        foreach ($courses_data['courses'] as $data){
+
+                            $html .= "<li class=\"no_bullet_point\">
+					        <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
+                            $html .= $data->id;
+					        $html .= "\">";
+                            $html .= $data->shortname . " " . $this->uv_first_capital($data->fullname);
+                            $html .= "</a>
+				            </li>";
+
+                        }
+                        $html .= "</ul>
+		                </div>
+	                    </div>
+                        </div>";
+                    }
+                }
+                //End Past Regular
+                //Past No Regular
+                foreach ($array_courses_group['no_regular_courses'] as $key => $courses_data){
+                    if($key == 'past_no_regular'){
+                        $html .= "<div class=\"\">
+                        <div class=\"\" id=\"heading\">
+                        <h5 class=\"mb-0\">
+                        <button class=\"btn btn-link\" data-toggle=\"collapse\" style=\"padding: 0.190rem .10rem !important;\" data-target=\"";
+                        $html .= "#" . $courses_data['semester_code'] . "M";
+                        $html .= "\" aria-expanded=\"true\" aria-controls=\"";
+                        $html .= $courses_data['semester_code'] . "M";
+                        $html .= "\">
+                        <b><span class=\"fa fa-caret-right\"></span>";
+                        $html .= $courses_data['semester_name'];
+                        $html .= "</b>
+                        </button>
+                        </h5>
+                        </div>";
+                        $html .= "<div id=\"";
+                        $html .= $courses_data['semester_code'] . "M";
+                        $html .= "\" class=\"collapse\" aria-labelledby=\"heading\" data-parent=\"#accordion\">
+                        <div class=\"card-body\" style=\"padding: 0.50rem 1.00rem 0rem 1.00rem !important;\">
+                        <ul style=\"padding-left: 0rem !important;\">";
+                        foreach ($courses_data['courses'] as $data){
+                            $html .= "<li class=\"no_bullet_point\">
+                            <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
+                            $html .= $data->id;
+                            $html .= "\">";
+                            $html .= $this->uv_first_capital($data->fullname);
+                            $html .= "</a>
+                            </li>";
+                        }
+                        $html .= "</ul>
+                        </div>
+                        </div>
+                        </div>";
+                    }
+                }
+                //End Past No Regular
+
+                $this->content->items[] = $html;
+                /*foreach ($courses as $course) {
                     $coursecontext = context_course::instance($course->id);
                     $linkcss = $course->visible ? "" : " class=\"dimmed\" ";
                     $this->content->items[]="<a $linkcss title=\"" . format_string($course->shortname, true, array('context' => $coursecontext)) . "\" ".
                                "href=\"$CFG->wwwroot/course/view.php?id=$course->id\">".$icon.format_string(get_course_display_name_for_list($course)). "</a>";
-                    //var_dump(get_course_display_name_for_list($course));
-                }
+                }*/
                 $this->title = get_string('mycourses');
             /// If we can update any course of the view all isn't hidden, show the view all courses link
                 if (has_capability('moodle/course:update', context_system::instance()) || empty($CFG->block_custom_course_list_hideallcourseslink)) {
@@ -560,6 +686,43 @@ class block_custom_course_list extends block_list {
     public function get_aria_role() {
         return 'navigation';
     }
+
+    /**
+     * Render the contents of a block_list.
+     *
+     * @param array $icons the icon for each item.
+     * @param array $items the content of each item.
+     * @return string HTML
+     */
+    public function list_block_contents($icons, $items) {
+        $row = 0;
+        $lis = array();
+        foreach ($items as $key => $string) {
+            $item = html_writer::start_tag('li', array('class' => 'r' . $row));
+            if (!empty($icons[$key])) { //test if the content has an assigned icon
+                $item .= html_writer::tag('div', $icons[$key], array('class' => 'icon column c0'));
+            }
+            $item .= html_writer::tag('div', $string, array('class' => 'column c1'));
+            $item .= html_writer::end_tag('li');
+            $lis[] = $item;
+            $row = 1 - $row; // Flip even/odd.
+        }
+        //$data = html_writer::tag('ul', implode("\n", $lis), array('class' => 'unlist'));
+        $data = html_writer::tag('div', $items[0], array('class' => 'tab-pane fade active show'));
+        return $data;
+    }
+
+
+    protected function formatted_contents($output) {
+        $this->get_content();
+        $this->get_required_javascript();
+        if (!empty($this->content->items)) {
+            return $this->list_block_contents($this->content->icons, $this->content->items);
+        } else {
+            return '';
+        }
+    }
+
 }
 
 

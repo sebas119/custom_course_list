@@ -633,7 +633,8 @@ class block_custom_course_list extends block_list {
                 $this->title = get_string('courses');
             }
         }
-
+        //Just for identify
+        $this->content->type = 'category';
         return $this->content;
 
     }
@@ -692,9 +693,10 @@ class block_custom_course_list extends block_list {
      *
      * @param array $icons the icon for each item.
      * @param array $items the content of each item.
+     * @param array $type category or html.
      * @return string HTML
      */
-    public function list_block_contents($icons, $items) {
+    public function list_block_contents($icons, $items, $type) {
         $row = 0;
         $lis = array();
         foreach ($items as $key => $string) {
@@ -707,8 +709,12 @@ class block_custom_course_list extends block_list {
             $lis[] = $item;
             $row = 1 - $row; // Flip even/odd.
         }
-        //$data = html_writer::tag('ul', implode("\n", $lis), array('class' => 'unlist'));
-        $data = html_writer::tag('div', $items[0], array('class' => 'tab-pane fade active show'));
+        if($type == 'category'){
+            $data = html_writer::tag('ul', implode("\n", $lis), array('class' => 'unlist'));
+        }else {
+            $data = html_writer::tag('div', $items[0], array('class' => 'tab-pane fade active show'));
+        }
+
         return $data;
     }
 
@@ -717,7 +723,7 @@ class block_custom_course_list extends block_list {
         $this->get_content();
         $this->get_required_javascript();
         if (!empty($this->content->items)) {
-            return $this->list_block_contents($this->content->icons, $this->content->items);
+            return $this->list_block_contents($this->content->icons, $this->content->items, $this->content->type);
         } else {
             return '';
         }

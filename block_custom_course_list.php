@@ -459,7 +459,7 @@ class block_custom_course_list extends block_list {
 			    <div class=\"\" id=\"heading\" >
 				<h5 class=\"mb-0\">
 				<button class=\"btn btn-link\" data-toggle=\"collapse\" style=\"padding: 0.190rem .10rem !important;\" data-target=\"#progreso\" aria-expanded=\"true\" aria-controls=\"progreso\">
-				<b><span class=\"fa fa-caret-right\"></span> En Progreso</b>
+				<b><span class=\"fa fa-caret-right\"></span>Semestre actual</b>
 				</button>
 				</h5>
 			    </div>

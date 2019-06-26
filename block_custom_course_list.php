@@ -431,6 +431,7 @@ class block_custom_course_list extends block_list {
         $this->content->items = array();
         $this->content->icons = array();
         $this->content->footer = '';
+        $this->content->type = ''; //Se uso para identificar si es category o cursos normales
 
         $icon = $OUTPUT->pix_icon('i/course', get_string('course'));
 

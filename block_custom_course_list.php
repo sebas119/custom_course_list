@@ -412,11 +412,12 @@ class block_custom_course_list extends block_list {
     }
 
     function uv_first_capital($string){
+        //Patron para reconocer y no modificar numeros romanos
         $pattern = '/\b(?![LXIVCDM]+\b)([A-Z_-ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ]+)\b/';
         $output = preg_replace_callback($pattern, function($matches) {
-            return ucfirst(mb_strtolower($matches[0], 'UTF-8'));
+            return mb_strtolower($matches[0], 'UTF-8');
         }, $string);
-
+        $output = ucfirst($output);
         return $output;
     }
 
@@ -470,7 +471,7 @@ class block_custom_course_list extends block_list {
 				<ul style=\"padding-left: 0rem !important;\">";
                 foreach ($array_courses_group['regular_courses']['inprogress_regular'] as $courses_in_progress){
                     $html .= "<li class=\"no_bullet_point\">
-					        <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
+					        <a class=\"fullname_course_myoverview\" style='text-transform: none !important;' href=\"http://10.162.18.238/moodle35/course/view.php?id=";
                     $html .= $courses_in_progress->id;
                     $html .= "\">";
                     $html .= $courses_in_progress->shortname . " " . $this->uv_first_capital($courses_in_progress->fullname);
@@ -556,7 +557,7 @@ class block_custom_course_list extends block_list {
                         <ul style=\"padding-left: 0rem !important;\">";
                         foreach ($courses_data['courses'] as $data){
                             $html .= "<li class=\"no_bullet_point\">
-                            <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
+                            <a class=\"fullname_course_myoverview\" style='text-transform: none !important;' href=\"http://10.162.18.238/moodle35/course/view.php?id=";
                             $html .= $data->id;
                             $html .= "\">";
                             $html .= $this->uv_first_capital($data->fullname);

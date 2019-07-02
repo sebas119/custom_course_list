@@ -518,7 +518,7 @@ class block_custom_course_list extends block_list {
                         foreach ($courses_data['courses'] as $data){
 
                             $html .= "<li class=\"no_bullet_point\">
-					        <a class=\"fullname_course_myoverview\" href=\"http://10.162.18.238/moodle35/course/view.php?id=";
+					        <a class=\"fullname_course_myoverview\"  style='text-transform: none !important;' href=\"http://10.162.18.238/moodle35/course/view.php?id=";
                             $html .= $data->id;
 					        $html .= "\">";
                             $html .= $data->shortname . " " . $this->uv_first_capital($data->fullname);

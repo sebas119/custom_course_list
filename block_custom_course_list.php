@@ -411,6 +411,13 @@ class block_custom_course_list extends block_list {
         return $courses;
     }
 
+    /**
+     * uv_first_capital
+     * Recibe un string
+     * @param $string
+     * @author Sebas119
+     * @return string|string[]|null
+     */
     function uv_first_capital($string){
         //Patron para reconocer y no modificar numeros romanos
         $pattern = '/\b(?![LXIVCDM]+\b)([A-Z_-ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝ]+)\b/';

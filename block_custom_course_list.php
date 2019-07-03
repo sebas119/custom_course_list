@@ -487,7 +487,7 @@ class block_custom_course_list extends block_list {
                 }
                 foreach ($array_courses_group['no_regular_courses']["inprogress_no_regular"] as $courses_in_progress){
                     $html .= "<li class=\"no_bullet_point\">
-					        <a class=\"fullname_course_myoverview\" href=\"$CFG->wwwroot/course/view.php?id=";
+					        <a class=\"fullname_course_myoverview\" style='text-transform: none !important;' href=\"http://10.162.18.238/moodle35/course/view.php?id=";
                     $html .= $courses_in_progress->id;
                     $html .= "\">";
                     $html .= $this->uv_first_capital($courses_in_progress->fullname);
@@ -525,7 +525,7 @@ class block_custom_course_list extends block_list {
                         foreach ($courses_data['courses'] as $data){
 
                             $html .= "<li class=\"no_bullet_point\">
-					        <a class=\"fullname_course_myoverview\"  style='text-transform: none !important;' href=\"$CFG->wwwroot/course/view.php?id=";
+					        <a class=\"fullname_course_myoverview\" style='text-transform: none !important;' href=\"http://10.162.18.238/moodle35/course/view.php?id=";
                             $html .= $data->id;
 					        $html .= "\">";
                             $html .= $data->shortname . " " . $this->uv_first_capital($data->fullname);
